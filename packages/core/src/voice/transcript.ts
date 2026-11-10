@@ -46,7 +46,7 @@ export function isSelfEcho(heard: string, recentlySpoken: readonly string[]): bo
  * Matched on whole words only, and only at the very start of the utterance.
  */
 const WAKE_WORD =
-  /^(?:(?:hey|ehi|ei|ok|okay|ciao|salve)\s+)?(?:(?:j|gi|g|i|y|ch|chi)[aeio]r?v[ie]s?|[ae]rv[ie]s?)\b[\s,.:;!?-]*/i;
+  /^(?:(?:hey|ehi|ei|ok|okay|ciao|salve|oi|ola|e ai)[\s,]+)?(?:(?:dj|j|gi|g|i|y|ch|chi)[aeio]r?v[ie]s?|[ae]rv[ie]s?)\b[\s,.:;!?-]*/i;
 
 export interface WakeMatch {
   matched: boolean;

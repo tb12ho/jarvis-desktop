@@ -3,8 +3,15 @@
  * UI-facing names intentionally match docs/design/DESIGN-BRIEF.md §7.
  */
 
-export type Locale = 'en' | 'it';
+export type Locale = 'en' | 'it' | 'pt';
 export type Platform = 'mac' | 'win' | 'linux';
+
+/** BCP 47 tag for `Intl` formatting. `Locale` stays a 2-letter code because the code slices it. */
+export const intlLocale = (locale: Locale): string => {
+  if (locale === 'it') return 'it-IT';
+  if (locale === 'pt') return 'pt-BR';
+  return 'en-GB';
+};
 
 export type BrainId = 'chatgpt' | 'claude' | 'codex' | 'api-anthropic' | 'api-openai' | 'local';
 export type AgentId = 'claude' | 'codex' | 'home';

@@ -141,6 +141,75 @@ const P = {
     briefingStarted: '[happy] Buongiorno! Preparo il tuo briefing.',
     and: 'e',
   },
+  pt: {
+    nothingRunning: 'No momento não há nada em execução.',
+    stopped: 'Parado.',
+    stoppedAll: 'Ok, parei tudo.',
+    timerSet: (d: string) => `Timer de ${d} iniciado.`,
+    alarmSet: (t: string) => `Alarme definido para as ${t}.`,
+    reminderSet: (d: string, what: string) => `Ok, daqui a ${d} eu te lembro de ${what}.`,
+    reminderFire: (what: string) => `[calm] Lembrete: ${what}.`,
+    timerFire: (label: string) => (label ? `[happy] O timer ${label} terminou.` : '[happy] Tempo esgotado!'),
+    alarmFire: '[happy] Bom dia! Este é o seu alarme.',
+    time: (t: string) => `São ${t}.`,
+    date: (d: string) => `Hoje é ${d}.`,
+    privateOn: 'Modo privado ativado. Tudo fica neste computador.',
+    privateOff: 'Modo privado desativado.',
+    nothingToRepeat: 'Ainda não falei nada.',
+    noBrain:
+      'Ainda não tenho um cérebro conectado. Abra as configurações e entre com o ChatGPT, o Claude Code ou adicione uma chave de API.',
+    capReached: (p: string) =>
+      `[sigh] Sua cota semanal de ${p} para o Jarvis acabou. Não vou mudar para a API paga por conta própria: você pode escolher outro cérebro nas configurações.`,
+    needsLogin: (p: string) => `Preciso que você entre de novo no ${p}.`,
+    brainError: '[sigh] Desculpe, não consegui entender isso. Tenta de novo?',
+    tooManySessions: (n: number) => `Já tenho ${n} coisas em andamento. Vamos esperar uma terminar.`,
+    whichProject: 'Qual projeto?',
+    whatShouldItDo: 'O que ele deve fazer?',
+    notGrounded: 'Só para ter certeza: o que exatamente você quer que eu faça?',
+    started: (p: string) => `Deixa comigo, começando em ${p}.`,
+    noAgent:
+      'Não consigo iniciar isso: nenhum agente está disponível. Instale o Claude Code ou o Codex, ou ative o agente Casa nas configurações.',
+    agentMissing: (a: string) => `${a} não está instalado ou não está conectado.`,
+    folderMissing: (p: string) => `A pasta de ${p} não existe. Corrija o caminho nas configurações.`,
+    progress: (elapsed: string, doing: string) => `Já se passaram ${elapsed}, ${doing}.`,
+    approvalVoice: (title: string) => `Preciso da sua permissão para ${title}. Diga sim ou não.`,
+    approvalClick: (title: string) => `Preciso da sua permissão para ${title}. Confirme na tela.`,
+    approvalDenied: 'Ok, não vou fazer isso.',
+    approvalExpired: 'Sem resposta, então recusei.',
+    remembered: 'Entendi, vou lembrar disso.',
+    forgotten: 'Feito, esquecido.',
+    sessionDone: (p: string) => `${p} está pronto.`,
+    sessionFailed: (p: string) => `${p} não deu certo, dá uma olhada no log.`,
+    dictationOn: 'Ditado ativado. Pode falar, eu escrevo.',
+    dictationCancelled: 'Ditado cancelado.',
+    dictationIdle: 'No momento não estou fazendo ditado.',
+    dictationNoShell: 'No momento não consigo escrever em outros apps.',
+    clipboardEmpty: 'A área de transferência está vazia. Copie um texto primeiro.',
+    clipboardUnavailable: 'No momento não consigo ler a área de transferência.',
+    nothingToCopy: 'Ainda não há nada para copiar.',
+    copied: 'Copiado para a área de transferência.',
+    screenOff:
+      'O acesso à tela está desativado. Ative o Acesso à tela em Configurações, na seção Privacidade, e me peça de novo.',
+    screenNoVision: (b: string) =>
+      `${b} não consegue ver imagens. Conecte o ChatGPT ou um modelo local com visão, ou escolha um cérebro de API, nas configurações.`,
+    screenFailed: 'Não consegui capturar a tela.',
+    shoppingAdded: (items: string) => `Adicionei ${items} à lista de compras.`,
+    shoppingAlready: (items: string) => `${items} ${/ e /.test(items) ? 'já estão' : 'já está'} na lista.`,
+    shoppingRemoved: (items: string) => `Tirei ${items} da lista de compras.`,
+    shoppingNotFound: (items: string) => `Não encontro ${items} na lista de compras.`,
+    shoppingEmpty: 'A lista de compras está vazia.',
+    shoppingList: (n: number, items: string) =>
+      n === 1 ? `Na lista de compras tem uma coisa: ${items}.` : `Na lista de compras tem ${n} coisas: ${items}.`,
+    shoppingCleared: 'Lista de compras esvaziada.',
+    todayForgotten: 'Feito. Apaguei o histórico de hoje.',
+    memoryNone: 'Ainda não sei nada sobre você. Me diga, por exemplo: lembra que eu prefiro respostas curtas.',
+    memorySummary: (n: number, items: string, more: number) =>
+      `${n === 1 ? 'Sobre você eu lembro de uma coisa' : `Sobre você eu lembro de ${n} coisas`}: ${items}.${
+        more ? ` E mais ${more}.` : ''
+      } Você pode revisar na tela de Memória.`,
+    briefingStarted: '[happy] Bom dia! Vou montar o seu briefing.',
+    and: 'e',
+  },
 } as const;
 
 export type Phrases = (typeof P)['en'];
@@ -155,6 +224,7 @@ export function spokenList(items: string[], locale: Locale): string {
 /** Spoken duration: "40 seconds", "3 minutes", "1 hour and 5 minutes" / Italian equivalents. */
 export function spokenDuration(seconds: number, locale: Locale): string {
   const s = Math.max(0, Math.round(seconds));
+  if (locale === 'pt') return spokenDurationPt(s);
   const it = locale === 'it';
   if (s < 60) return it ? `${s} secondi` : `${s} seconds`;
   const m = Math.floor(s / 60);
@@ -166,6 +236,18 @@ export function spokenDuration(seconds: number, locale: Locale): string {
   return it ? `${hs} e ${rm} minuti` : `${hs} and ${rm} minutes`;
 }
 
+/** Portuguese spoken duration for a whole number of seconds ("40 segundos", "1 hora e 5 minutos"). */
+function spokenDurationPt(s: number): string {
+  if (s < 60) return `${s} segundos`;
+  const m = Math.floor(s / 60);
+  if (s < 3600) return m === 1 ? 'um minuto' : `${m} minutos`;
+  const h = Math.floor(s / 3600);
+  const rm = Math.floor((s % 3600) / 60);
+  const hs = h === 1 ? 'uma hora' : `${h} horas`;
+  if (!rm) return hs;
+  return `${hs} e ${rm} ${rm === 1 ? 'minuto' : 'minutos'}`;
+}
+
 /** Yes/no recognition for voice approvals (only ever used for low/medium risk). */
 export function parseYesNo(text: string): 'yes' | 'no' | null {
   const t = text
@@ -175,12 +257,16 @@ export function parseYesNo(text: string): 'yes' | 'no' | null {
     .replace(/[^\p{L}\s]/gu, ' ')
     .trim();
   if (
-    /^(yes|yeah|yep|sure|ok|okay|go ahead|do it|allow|si|certo|vai|procedi|ok vai|fallo|consenti|va bene)( please| pure)?$/.test(
+    /^(yes|yeah|yep|sure|ok|okay|go ahead|do it|allow|si|certo|vai|procedi|ok vai|fallo|consenti|va bene|sim|pode ir|pode|claro|pode fazer|pode sim|faz|faz isso|beleza|autorizo|permito|isso|ta bom|tudo bem)( please| pure| por favor)?$/.test(
       t,
     )
   )
     return 'yes';
-  if (/^(no|nope|don ?t|do not|deny|stop|cancel|non farlo|annulla|nega|lascia stare|ferma)( please| grazie)?$/.test(t))
+  if (
+    /^(no|nope|don ?t|do not|deny|stop|cancel|non farlo|annulla|nega|lascia stare|ferma|nao|nao faca|nao pode|pare|cancela|nega|de jeito nenhum)( please| grazie| por favor)?$/.test(
+      t,
+    )
+  )
     return 'no';
   return null;
 }

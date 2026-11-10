@@ -2,12 +2,12 @@
  * Prompts and parsers for everyday features that are not plain router turns: clipboard and screen
  * questions (content attached as untrusted data, R4) and the morning briefing task.
  */
-import type { Locale, Memory } from '../model.js';
+import { intlLocale, type Locale, type Memory } from '../model.js';
 import { sanitizeUntrusted, UNTRUSTED_RULE, wrapUntrusted } from '../policy/content.js';
 import type { SystemCardData } from '../ui.js';
 import type { ContentSource } from './fastpath.js';
 
-const LANGUAGE: Record<Locale, string> = { en: 'English', it: 'Italian' };
+const LANGUAGE: Record<Locale, string> = { en: 'English', it: 'Italian', pt: 'Brazilian Portuguese' };
 
 /** Clipboard text sent to a brain is capped (characters). */
 export const MAX_CLIPBOARD_CHARS = 8000;
@@ -93,7 +93,7 @@ export const BRIEFING_MAX_WORDS = 60;
 /** Self-contained task for the agent that prepares the morning briefing. */
 export function briefingTask(locale: Locale, opts: { now: Date; timeZone: string; location?: string }): string {
   const lang = LANGUAGE[locale];
-  const date = new Intl.DateTimeFormat(locale === 'it' ? 'it-IT' : 'en-GB', {
+  const date = new Intl.DateTimeFormat(intlLocale(locale), {
     dateStyle: 'full',
     timeZone: opts.timeZone,
   }).format(opts.now);

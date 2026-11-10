@@ -29,7 +29,7 @@ export type HostRunOptions = AgentRunOptions & HostRunExtras;
 
 /** Voice-friendly behaviour appended to coding agents' system prompts. */
 export function voiceGuidance(locale: Locale): string {
-  const lang = locale === 'it' ? 'Italian' : 'English';
+  const lang = locale === 'it' ? 'Italian' : locale === 'pt' ? 'Brazilian Portuguese' : 'English';
   return [
     'You are running headless on behalf of Jarvis, a voice assistant. The user hears short spoken updates, not your full output.',
     `- Before each major step write ONE short plain sentence saying what you are about to do (no markdown), in ${lang} or in the language of the task.`,

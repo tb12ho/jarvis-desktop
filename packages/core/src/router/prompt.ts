@@ -1,5 +1,5 @@
 import type { Locale, Memory, Project, Session, Turn } from '../model.js';
-import { isLive } from '../model.js';
+import { intlLocale, isLive } from '../model.js';
 import { UNTRUSTED_RULE, wrapUntrusted } from '../policy/content.js';
 import { NEUTRAL_CUES } from '../voice/cues.js';
 
@@ -19,7 +19,7 @@ export interface RouterContext {
   availableAgents: ('claude' | 'codex' | 'home')[];
 }
 
-const LANGUAGE: Record<Locale, string> = { en: 'English', it: 'Italian' };
+const LANGUAGE: Record<Locale, string> = { en: 'English', it: 'Italian', pt: 'Brazilian Portuguese' };
 
 export function routerSystemPrompt(locale: Locale): string {
   const lang = LANGUAGE[locale];
@@ -64,7 +64,7 @@ const fmtAgo = (ms: number): string => {
 
 export function routerUserPrompt(ctx: RouterContext, transcript: string): string {
   const now = ctx.now.getTime();
-  const fmt = new Intl.DateTimeFormat(ctx.locale === 'it' ? 'it-IT' : 'en-GB', {
+  const fmt = new Intl.DateTimeFormat(intlLocale(ctx.locale), {
     dateStyle: 'full',
     timeStyle: 'short',
     timeZone: ctx.timeZone,

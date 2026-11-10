@@ -22,6 +22,7 @@ import {
   contentUserPrompt,
   enforceGrounding,
   type FastIntent,
+  intlLocale,
   isTaskGrounded,
   type Logger,
   locationMemory,
@@ -650,7 +651,7 @@ export class Orchestrator {
   private async fastPath(f: FastIntent, heard: string): Promise<void> {
     const s = this.deps.settings();
     const p = phrases(s.locale);
-    const loc = s.locale === 'it' ? 'it-IT' : 'en-GB';
+    const loc = intlLocale(s.locale);
     const action = `fast:${f.kind}`;
     switch (f.kind) {
       case 'stop-speaking':
@@ -915,6 +916,9 @@ export class Orchestrator {
       .filter((x) => x.status === 'running' || x.status === 'needs-input' || x.status === 'approval');
     if (!live.length) return p.nothingRunning;
     const parts = live.slice(0, 3).map((x) => `${x.project}: ${(x.activity ?? x.status).replace(/[.!]+$/, '')}`);
+    if (s.locale === 'pt') {
+      return `${live.length === 1 ? 'Uma coisa em andamento' : `${live.length} coisas em andamento`}. ${parts.join('; ')}.`;
+    }
     return s.locale === 'it'
       ? `${live.length === 1 ? 'Un lavoro in corso' : `${live.length} lavori in corso`}. ${parts.join('; ')}.`
       : `${live.length === 1 ? 'One thing running' : `${live.length} things running`}. ${parts.join('; ')}.`;

@@ -54,6 +54,33 @@ const X = {
     unknownSession: 'Non trovo quella sessione.',
     mcpSpeakPrefix: '',
   },
+  pt: {
+    privateBlocked: (what: string) =>
+      `O modo privado está ativado, então não posso usar ${what}: isso enviaria dados para fora deste computador. Escolha uma opção local ou desative o modo privado.`,
+    privateNoBrain:
+      'O modo privado está ativado e nenhum cérebro local está configurado. Adicione um modelo local nas configurações ou desative o modo privado.',
+    cloudSttPrivate: 'O modo privado está ativado, então a transcrição na nuvem está desativada.',
+    ttsFallback: (label: string, why: 'not-configured' | 'no-credit' | 'failed') =>
+      why === 'not-configured'
+        ? `${label} ainda não está configurado (adicione a chave de API ou baixe a voz em Configurações › Voz): usei a voz do sistema.`
+        : why === 'no-credit'
+          ? `${label} não tem mais crédito na sua conta (confira o saldo no site dele): usei a voz do sistema.`
+          : `${label} não respondeu: usei a voz do sistema.`,
+    speechModelMissing:
+      'Nenhum modelo de reconhecimento de voz está instalado. Abra Configurações › Microfone e palavra de ativação e baixe um.',
+    sttFailed: '[sigh] Não consegui transcrever isso. Tenta de novo?',
+    interrupted: 'Interrompido quando o Jarvis reiniciou.',
+    relayWriteRefused:
+      'Esta ferramenta está desativada para clientes remotos. Ative as ferramentas de escrita para o relay nas configurações do Jarvis.',
+    noAnswer: 'O usuário não respondeu.',
+    opened: 'Aberto.',
+    nothingToOpen: 'Ainda não há nada para abrir.',
+    queued: 'Entendi, passo isso adiante assim que estiver livre.',
+    projectCreated: (p: string) => `Criei o projeto ${p}.`,
+    cancelled: 'Cancelado.',
+    unknownSession: 'Não encontro essa sessão.',
+    mcpSpeakPrefix: '',
+  },
 } as const;
 
 export type ExtraPhrases = (typeof X)['en'];

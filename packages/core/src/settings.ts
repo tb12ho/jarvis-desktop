@@ -4,7 +4,7 @@ const hotkey = z.string().min(1).max(64);
 
 /** User settings. Unknown keys are dropped; missing keys take defaults (forward/backward compatible). */
 export const SettingsSchema = z.object({
-  locale: z.enum(['en', 'it']).default('en'),
+  locale: z.enum(['en', 'it', 'pt']).default('en'),
   userName: z.string().max(80).default(''),
   onboardingComplete: z.boolean().default(false),
   launchAtLogin: z.boolean().default(false),

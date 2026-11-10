@@ -599,7 +599,11 @@ export class App {
     });
     reg('tts.preview', ui, (p) => {
       const sample =
-        this.settings().locale === 'it' ? '[happy] Ciao! Questa è la mia voce.' : "[happy] Hi! This is how I'll sound.";
+        this.settings().locale === 'it'
+          ? '[happy] Ciao! Questa è la mia voce.'
+          : this.settings().locale === 'pt'
+            ? '[happy] Oi! Esta é a minha voz.'
+            : "[happy] Hi! This is how I'll sound.";
       void this.voice.speak(sample, p.voiceId ? { tts: p.provider, voiceId: p.voiceId } : { tts: p.provider });
       return ok;
     });

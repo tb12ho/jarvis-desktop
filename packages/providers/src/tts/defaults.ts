@@ -9,12 +9,19 @@
  * - Kokoro:     en → bm_george (British male); Kokoro's JS build only phonemizes English.
  */
 export const DEFAULT_VOICES = {
-  elevenlabs: { en: 'JBFqnCBsd6RMkjVDRZzb', it: 'JBFqnCBsd6RMkjVDRZzb' },
-  openai: { en: 'onyx', it: 'onyx' },
-  piper: { en: 'en_US-lessac-medium', it: 'it_IT-paola-medium' },
-  kokoro: { en: 'bm_george', it: 'bm_george' },
+  elevenlabs: { en: 'JBFqnCBsd6RMkjVDRZzb', it: 'JBFqnCBsd6RMkjVDRZzb', pt: 'JBFqnCBsd6RMkjVDRZzb' },
+  openai: { en: 'onyx', it: 'onyx', pt: 'onyx' },
+  piper: { en: 'en_US-lessac-medium', it: 'it_IT-paola-medium', pt: 'pt_BR-faber-medium' },
+  kokoro: { en: 'bm_george', it: 'bm_george', pt: 'bm_george' },
 } as const;
 
-export const lang = (locale: string): 'en' | 'it' => (locale.slice(0, 2).toLowerCase() === 'it' ? 'it' : 'en');
+export type VoiceLang = 'en' | 'it' | 'pt';
+
+export const lang = (locale: string): VoiceLang => {
+  const code = locale.slice(0, 2).toLowerCase();
+  if (code === 'it') return 'it';
+  if (code === 'pt') return 'pt';
+  return 'en';
+};
 
 export const clamp = (v: number, lo: number, hi: number): number => Math.min(hi, Math.max(lo, v));

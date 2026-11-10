@@ -76,6 +76,18 @@ export const PIPER_VOICES: Record<string, PiperVoiceAsset> = {
       sha256: 'aea19c0a7fce29fbc359b93f10e7902854401e4c95ae2ea328ae516b15d296cf',
     },
   },
+  'pt_BR-faber-medium': {
+    name: 'Faber (Brazilian Portuguese)',
+    locale: 'pt',
+    model: {
+      url: `${VOICES_BASE}/pt/pt_BR/faber/medium/pt_BR-faber-medium.onnx`,
+      sha256: '858555e3a064209c57088fe6bd70c4c3dc54d03eaa00c45d5ecaf43a33f95aa7',
+    },
+    config: {
+      url: `${VOICES_BASE}/pt/pt_BR/faber/medium/pt_BR-faber-medium.onnx.json`,
+      sha256: '7e694de195ae3fc36dd732c445eb04fb49b649854893cb5506b978f0d50a1d6f',
+    },
+  },
   'en_US-lessac-medium': {
     name: 'Lessac (US English)',
     locale: 'en',

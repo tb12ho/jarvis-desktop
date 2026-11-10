@@ -82,6 +82,8 @@ export class KokoroTts implements TtsProvider {
   }
 
   async synthesize(req: TtsRequest): Promise<TtsAudio> {
+    // Kokoro's JS build only phonemizes English: refuse other languages so the app falls back to the system voice.
+    if (lang(req.locale) !== 'en') throw new ProviderError('Kokoro only speaks English', 'not-configured', ID);
     const tts = await this.load();
     const voice =
       req.voiceId ?? preferredVoice(this.deps.settings(), ID, req.locale) ?? DEFAULT_VOICES.kokoro[lang(req.locale)];

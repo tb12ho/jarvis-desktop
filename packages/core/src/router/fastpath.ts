@@ -195,36 +195,36 @@ export function matchFastIntent(utterance: string): FastIntent | null {
   if (!t) return null;
 
   if (
-    /^(stop|end|cancel|exit|quit) (the )?(dictation|dictating)$|^(fine|stop|ferma|annulla|basta|termina|chiudi)( la)? dettatura$/.test(
+    /^(stop|end|cancel|exit|quit) (the )?(dictation|dictating)$|^(fine|stop|ferma|annulla|basta|termina|chiudi)( la)? dettatura$|^(para|pare|termina|encerra) (de )?(ditar|ditado)$|^fim do ditado$/.test(
       t,
     )
   ) {
     return { kind: 'dictate-stop' };
   }
   if (
-    /^(dictate|dictation|start dictation|start dictating|take dictation|dictation mode|type what i say)$|^(dettatura|detta|avvia( la)? dettatura|inizia( la)? dettatura|modalita dettatura|scrivi sotto dettatura|scrivi quello che dico)$/.test(
+    /^(dictate|dictation|start dictation|start dictating|take dictation|dictation mode|type what i say)$|^(dettatura|detta|avvia( la)? dettatura|inizia( la)? dettatura|modalita dettatura|scrivi sotto dettatura|scrivi quello che dico|ditado|ditar|modo ditado|comeca o ditado|inicia o ditado)$/.test(
       t,
     )
   ) {
     return { kind: 'dictate' };
   }
-  if (/^(good morning|morning|buongiorno|buon giorno)( jarvis)?$/.test(t)) return { kind: 'briefing' };
+  if (/^(good morning|morning|buongiorno|buon giorno|bom dia)( jarvis)?$/.test(t)) return { kind: 'briefing' };
   if (
-    /^(what do you know about me|what do you remember about me|what have you remembered about me|(che )?cosa sai di me|(che )?cosa ricordi di me)$/.test(
+    /^(what do you know about me|what do you remember about me|what have you remembered about me|(che )?cosa sai di me|(che )?cosa ricordi di me|o que voce (sabe|lembra) (sobre|de) mim)$/.test(
       t,
     )
   ) {
     return { kind: 'what-you-know' };
   }
   if (
-    /^(delete|clear|erase|wipe|forget) (all of )?today'?s? (history|conversations?)$|^forget (about )?today$|^(cancella|elimina|svuota) (la )?cronologia di oggi$|^dimentica (oggi|la giornata di oggi)$/.test(
+    /^(delete|clear|erase|wipe|forget) (all of )?today'?s? (history|conversations?)$|^forget (about )?today$|^(cancella|elimina|svuota) (la )?cronologia di oggi$|^dimentica (oggi|la giornata di oggi)$|^(apaga|apague|limpa|limpe) (o )?(historico|conversas?) de hoje$|^esquec[ea] hoje$/.test(
       t,
     )
   ) {
     return { kind: 'forget-today' };
   }
   if (
-    /^(copy (it|that|this|the result|the text)( to (the|my) clipboard)?)$|^(copialo|copiala|copia (il risultato|il testo|questo)( negli appunti)?)$/.test(
+    /^(copy (it|that|this|the result|the text)( to (the|my) clipboard)?)$|^(copialo|copiala|copia (il risultato|il testo|questo)( negli appunti)?|copia (o )?(resultado|texto|isso)( na area de transferencia)?|copie isso)$/.test(
       t,
     )
   ) {
@@ -233,8 +233,18 @@ export function matchFastIntent(utterance: string): FastIntent | null {
   const shop = matchShopping(norm(utterance, true));
   if (shop) return shop;
 
-  if (/^(stop|basta|zitto|silenzio|shut up|quiet|be quiet|fermati|ferma)$/.test(t)) return { kind: 'stop-speaking' };
-  if (/^(stop|cancel|ferma|annulla|interrompi) (everything|all|tutto|tutte|tutti)( le sessioni)?$/.test(t)) {
+  if (
+    /^(stop|basta|zitto|silenzio|shut up|quiet|be quiet|fermati|ferma|para|pare|cala a boca|chega|silencio|quieto)$/.test(
+      t,
+    )
+  ) {
+    return { kind: 'stop-speaking' };
+  }
+  if (
+    /^(stop|cancel|ferma|annulla|interrompi|pare|para|cancela) (everything|all|tutto|tutte|tutti|tudo|todas|todos)( le sessioni| as sessoes)?$/.test(
+      t,
+    )
+  ) {
     return { kind: 'cancel-all' };
   }
   if (
@@ -254,8 +264,12 @@ export function matchFastIntent(utterance: string): FastIntent | null {
   if (/^(what'?s the date|what day is (it|today)|che giorno e( oggi)?|che data e( oggi)?)$/.test(t))
     return { kind: 'date' };
   if (/^(open settings|apri (le )?impostazioni|settings|impostazioni)$/.test(t)) return { kind: 'open-settings' };
-  if (/\b(local|private) mode\b|\bmodalita (locale|privata)\b|\btutto in locale\b/.test(t)) {
-    const off = /\b(off|disable|turn off|exit|esci|disattiva|spegni)\b/.test(t);
+  if (
+    /\b(local|private) mode\b|\bmodalita (locale|privata)\b|\btutto in locale\b|\bmodo (local|privado)\b|\btudo local\b/.test(
+      t,
+    )
+  ) {
+    const off = /\b(off|disable|turn off|exit|esci|disattiva|spegni|desativa|desligar|sair)\b/.test(t);
     return { kind: 'private-mode', on: !off };
   }
 

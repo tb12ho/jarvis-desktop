@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Project } from '@jarvis/core';
 import { describe, expect, it, vi } from 'vitest';
@@ -105,7 +105,10 @@ describe('completion', () => {
     await until(() => t.host.spoken().includes('Your site is live.'));
     expect(t.host.of('host.open')).toEqual([{ target: 'http://localhost:5173/', kind: 'url' }]);
     expect(t.brain.requests[0]?.messages[1]?.content).toMatch(/<untrusted_data/);
-    const log = readFileSync(t.app.sessions.logPath(r.session.id), 'utf8').trim().split('\n');
+    // The NDJSON log is written through an async stream: wait for the result line to be flushed before reading.
+    const logFile = t.app.sessions.logPath(r.session.id);
+    await until(() => existsSync(logFile) && readFileSync(logFile, 'utf8').includes('"type":"result"'));
+    const log = readFileSync(logFile, 'utf8').trim().split('\n');
     expect(JSON.parse(log[0] as string)).toMatchObject({ type: 'start' });
     expect(log.some((l) => JSON.parse(l).type === 'result')).toBe(true);
   });
