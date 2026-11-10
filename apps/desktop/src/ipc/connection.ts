@@ -13,7 +13,10 @@ export function isMockMode(search: string = typeof location === 'undefined' ? ''
 export function createTransport(locale: Locale = 'en'): Transport {
   if (isMockMode()) {
     const q = typeof location === 'undefined' ? null : new URLSearchParams(location.search);
-    const mock = new MockTransport(q?.get('locale') === 'it' ? 'it' : locale);
+    const requestedLocale = q?.get('locale');
+    const mockLocale =
+      requestedLocale === 'it' || requestedLocale === 'pt' || requestedLocale === 'en' ? requestedLocale : locale;
+    const mock = new MockTransport(mockLocale);
     if (typeof location !== 'undefined') mock.patch(previewPatch(mock.snapshot, location.search));
     return mock;
   }

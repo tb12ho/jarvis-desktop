@@ -1,5 +1,5 @@
 /** ChatBubble + SystemCard (brief §6, handoff `ChatMessage.dc.html`). */
-import type { ShoppingItem } from '@jarvis/core';
+import { intlLocale, type Locale, type ShoppingItem } from '@jarvis/core';
 import {
   Bell,
   Check,
@@ -27,8 +27,8 @@ import { useNow } from '../../lib/motion';
 import type { ApprovalDecision, ChatMessage, SystemCardData } from '../../types/ui';
 import { Orb } from '../orb/Orb';
 
-export const formatTime = (at: number, locale: string) =>
-  new Date(at).toLocaleTimeString(locale === 'it' ? 'it-IT' : 'en-GB', { hour: '2-digit', minute: '2-digit' });
+export const formatTime = (at: number, locale: Locale) =>
+  new Date(at).toLocaleTimeString(intlLocale(locale), { hour: '2-digit', minute: '2-digit' });
 
 export interface ChatBubbleProps {
   message: ChatMessage;

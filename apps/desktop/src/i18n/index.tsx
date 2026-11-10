@@ -6,11 +6,12 @@ import { createContext, type ReactNode, useCallback, useContext } from 'react';
 import type { Locale } from '../types/ui';
 import en from './en.json';
 import it from './it.json';
+import pt from './pt.json';
 
 export type MessageKey = keyof typeof en;
 export type Vars = Record<string, string | number>;
 
-const DICTS: Record<Locale, Record<string, string>> = { en, it };
+const DICTS: Record<Locale, Record<string, string>> = { en, it, pt };
 
 export function translate(locale: Locale, key: MessageKey, vars?: Vars): string {
   const raw = DICTS[locale][key] ?? en[key] ?? key;

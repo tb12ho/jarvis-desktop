@@ -567,6 +567,7 @@ function TabBody(p: SettingsProps) {
                 options={[
                   { value: 'en', label: 'English' },
                   { value: 'it', label: 'Italiano' },
+                  { value: 'pt', label: 'Português (Brasil)' },
                 ]}
               />
             </Row>

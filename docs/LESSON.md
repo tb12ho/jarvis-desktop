@@ -2,6 +2,11 @@
 
 A running log of non-obvious findings, newest first. Consolidate into docs and rules at each milestone.
 
+## 2026-11-10 — Brazilian Portuguese voice (pt-BR)
+- **A Piper model's SHA-256 can come from Hugging Face's LFS metadata, not a local copy.** The `x-linked-etag` header of the `.onnx` URL is the file's SHA-256. Verify it against a real download before pinning: `curl -C - --retry 5 -o model.onnx <url>` resumes after the connection resets that interrupt large voice downloads, then `sha256sum` it.
+- **`locale.slice(0, 2)` and `=== 'it'` checks are everywhere.** Adding a third locale means touching every branch, not just the translation file. Use a single `intlLocale()` mapping for `Intl` and let `pt` flow through the same 2-letter code; the typecheck flags the places that still assume two locales.
+- **Kokoro's JS build only phonemizes English.** Routing Portuguese (or Italian) text to it produces garbage audio, so it must refuse non-English and let the app fall back to the system voice.
+
 ## 2026-10-03 — everyday features (phase 7)
 - **Captured content must not leak into history by the back door.** The router path persists every turn's `said` and every chat message. For clipboard/screen answers and dictation the derived text is as sensitive as the source, so those replies go out as *ephemeral* chat events (not stored) and the turn keeps only `heard` + action. Tests grep the SQLite rows for a marker string from the clipboard.
 - **Pick the brain before capturing.** Choosing the vision brain (and checking private mode) before calling `host.screenshot` means a refused request never takes a screenshot at all — simpler to reason about than "capture, then drop".

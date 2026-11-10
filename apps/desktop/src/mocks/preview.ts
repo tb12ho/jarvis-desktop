@@ -1,6 +1,6 @@
 /**
  * Mock-mode preview switches (design QA without the sidecar):
- *   ?theme=dark|light  &locale=en|it  &material=glass|solid  &private=1  &hue=200
+ *   ?theme=dark|light  &locale=en|it|pt  &material=glass|solid  &private=1  &hue=200
  *   &pill=idle-hint|listening|thinking|speaking|clarify|approval-low|approval-medium|approval-high|error|muted
  *   &sessions=0 (empty state)  &onboarding=1
  * Sample copy mirrors the Claude Design handoff (docs/design/handoff/).
@@ -8,8 +8,24 @@
 import type { PillState } from '../types/ui';
 import { type MockSnapshot, mockApproval } from './index';
 
-export function previewPill(kind: string, locale: 'en' | 'it', privateMode = false): PillState | null {
-  const it = locale === 'it';
+type PreviewLocale = 'en' | 'it' | 'pt';
+
+const PREVIEW_LOCALES: readonly PreviewLocale[] = ['en', 'it', 'pt'];
+
+/** Picks the copy for the active locale: `t(english, italian, portuguese)`. */
+const pick =
+  (locale: PreviewLocale) =>
+  <T>(en: T, it: T, pt: T): T =>
+    locale === 'it' ? it : locale === 'pt' ? pt : en;
+
+const CLARIFY_REPLIES = {
+  en: ['The two in my open tabs', 'MacBook Air vs XPS 13', 'Never mind'],
+  it: ['I due nelle schede aperte', 'MacBook Air vs XPS 13', 'Lascia stare'],
+  pt: ['Os dois das abas abertas', 'MacBook Air vs XPS 13', 'Deixa pra lá'],
+} as const;
+
+export function previewPill(kind: string, locale: PreviewLocale, privateMode = false): PillState | null {
+  const t = pick(locale);
   switch (kind) {
     case 'idle-hint':
       return { kind: 'idle-hint', shortcut: ['Alt', 'Space'] };
@@ -18,37 +34,45 @@ export function previewPill(kind: string, locale: 'en' | 'it', privateMode = fal
         ? {
             kind: 'listening',
             level: 0.6,
-            committed: it ? 'Jarvis, riassumi quello che' : 'Jarvis, summarise what I',
+            committed: t('Jarvis, summarise what I', 'Jarvis, riassumi quello che', 'Jarvis, resuma o que eu'),
             partial: '',
           }
         : {
             kind: 'listening',
             level: 0.6,
-            committed: it ? 'Jarvis, nel progetto shop aggiungi' : 'Jarvis, in project shop add a',
-            partial: it ? 'un fo' : 'foo',
+            committed: t(
+              'Jarvis, in project shop add a',
+              'Jarvis, nel progetto shop aggiungi',
+              'Jarvis, no projeto shop adicione',
+            ),
+            partial: t('foo', 'un fo', 'um ro'),
           };
     case 'thinking':
       return {
         kind: 'thinking',
-        transcript: it ? 'Jarvis, nel progetto shop aggiungi un footer' : 'Jarvis, in project shop add a footer',
+        transcript: t(
+          'Jarvis, in project shop add a footer',
+          'Jarvis, nel progetto shop aggiungi un footer',
+          'Jarvis, no projeto shop adicione um rodapé',
+        ),
         brain: 'chatgpt',
       };
     case 'speaking':
       return {
         kind: 'speaking',
-        text: it
-          ? 'Ci penso io — Claude Code parte in shop. Ti avviso quando ha finito.'
-          : 'On it — Claude Code is starting in shop. I’ll tell you when it’s done.',
+        text: t(
+          'On it — Claude Code is starting in shop. I’ll tell you when it’s done.',
+          'Ci penso io — Claude Code parte in shop. Ti avviso quando ha finito.',
+          'Deixa comigo — o Claude Code está começando no shop. Aviso quando terminar.',
+        ),
         progress: 0.45,
         level: 0.5,
       };
     case 'clarify':
       return {
         kind: 'clarify',
-        question: it ? 'Quali due portatili?' : 'Which two laptops?',
-        quickReplies: it
-          ? ['I due nelle schede aperte', 'MacBook Air vs XPS 13', 'Lascia stare']
-          : ['The two in my open tabs', 'MacBook Air vs XPS 13', 'Never mind'],
+        question: t('Which two laptops?', 'Quali due portatili?', 'Quais dois notebooks?'),
+        quickReplies: [...CLARIFY_REPLIES[locale]],
       };
     case 'approval-low':
     case 'approval-medium':
@@ -57,10 +81,12 @@ export function previewPill(kind: string, locale: 'en' | 'it', privateMode = fal
     case 'error':
       return {
         kind: 'error',
-        message: it
-          ? 'Non posso ancora cercare nella cartella Documenti.'
-          : 'I can’t search your Documents folder yet.',
-        actionLabel: it ? 'Apri impostazioni' : 'Open settings',
+        message: t(
+          'I can’t search your Documents folder yet.',
+          'Non posso ancora cercare nella cartella Documenti.',
+          'Ainda não consigo pesquisar na pasta Documentos.',
+        ),
+        actionLabel: t('Open settings', 'Apri impostazioni', 'Abrir configurações'),
       };
     case 'muted':
       return { kind: 'muted', reason: 'focus' };
@@ -71,7 +97,8 @@ export function previewPill(kind: string, locale: 'en' | 'it', privateMode = fal
 
 export function previewPatch(snap: MockSnapshot, search: string): Partial<MockSnapshot> {
   const q = new URLSearchParams(search);
-  const locale = q.get('locale') === 'it' ? 'it' : snap.settings.locale;
+  const requested = q.get('locale') as PreviewLocale | null;
+  const locale: PreviewLocale = requested && PREVIEW_LOCALES.includes(requested) ? requested : snap.settings.locale;
   const theme = q.get('theme');
   const material = q.get('material');
   const hue = Number(q.get('hue'));

@@ -2,7 +2,15 @@
  * S3 — Home (handoff "Prototype" window): title bar · rail · greeting + orb · suggestion chips ·
  * conversation · composer · footer (usage meter, R11 microphone indicator, connection).
  */
-import type { AgentId, Memory, Project, ShoppingItem, Turn } from '@jarvis/core';
+import {
+  type AgentId,
+  intlLocale,
+  type Locale,
+  type Memory,
+  type Project,
+  type ShoppingItem,
+  type Turn,
+} from '@jarvis/core';
 import {
   Brain,
   FolderKanban,
@@ -362,8 +370,7 @@ export function HomeScreen(p: HomeScreenProps) {
 function MemoryView(p: HomeScreenProps) {
   const t = useT();
   const locale = useLocale();
-  const date = (at: number) =>
-    new Date(at).toLocaleDateString(locale === 'it' ? 'it-IT' : 'en-GB', { day: 'numeric', month: 'short' });
+  const date = (at: number) => new Date(at).toLocaleDateString(intlLocale(locale), { day: 'numeric', month: 'short' });
   return (
     <div className="flex flex-col gap-1">
       <h1 className="m-0 mb-1.5 text-[22px] font-[650] tracking-[-0.02em]">{t('memory.title')}</h1>
@@ -409,7 +416,7 @@ function HistoryView({
   onSettings,
 }: {
   turns: Turn[] | null;
-  locale: string;
+  locale: Locale;
   onSettings(tab?: string): void;
 }) {
   const t = useT();

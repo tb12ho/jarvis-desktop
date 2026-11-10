@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import en from '../i18n/en.json';
 import it_ from '../i18n/it.json';
+import pt_ from '../i18n/pt.json';
 import { MockTransport } from '../ipc/mock';
 import { mockApproval, mockSessions, mockSnapshot } from '../mocks';
 import type { ChatMessage } from '../types/ui';
@@ -90,8 +91,9 @@ describe('mock backend', () => {
 });
 
 describe('i18n', () => {
-  it('en and it have identical keys and no empty strings', () => {
+  it('en, it and pt have identical keys and no empty strings', () => {
     expect(Object.keys(it_).sort()).toEqual(Object.keys(en).sort());
-    for (const [k, v] of Object.entries({ ...en, ...it_ })) expect(v, k).not.toBe('');
+    expect(Object.keys(pt_).sort()).toEqual(Object.keys(en).sort());
+    for (const [k, v] of Object.entries({ ...en, ...it_, ...pt_ })) expect(v, k).not.toBe('');
   });
 });

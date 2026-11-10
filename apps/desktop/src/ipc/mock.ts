@@ -237,7 +237,12 @@ export class MockTransport implements Transport {
         this.pushChat({ id: uid('c'), role: 'system', card: { type: 'approval-needed', request }, at: Date.now() });
         return;
       }
-      const reply = locale === 'it' ? `Ok — (demo) ho ricevuto: "${text}".` : `Okay — (demo) I heard: "${text}".`;
+      const reply =
+        locale === 'it'
+          ? `Ok — (demo) ho ricevuto: "${text}".`
+          : locale === 'pt'
+            ? `Ok — (demo) recebi: "${text}".`
+            : `Okay — (demo) I heard: "${text}".`;
       this.pushChat({ id: uid('j'), role: 'jarvis', text: reply, at: Date.now(), spoken: true });
       // Karaoke-style progress, as the real TTS playback reports it.
       const steps = 12;

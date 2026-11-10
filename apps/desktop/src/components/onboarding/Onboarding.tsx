@@ -446,6 +446,7 @@ function VoiceStep(p: OnboardingProps) {
           options={[
             { value: 'en', label: 'English' },
             { value: 'it', label: 'Italiano' },
+            { value: 'pt', label: 'Português (Brasil)' },
           ]}
         />
       </div>

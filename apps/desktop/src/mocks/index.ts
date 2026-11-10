@@ -116,6 +116,45 @@ export const COPY = {
       ['Giulia Romano è la referente del board', 'said', 15],
     ],
   },
+  pt: {
+    morning: 'Bom dia, Lorenzo. 14° e céu limpo. Três reuniões hoje — a primeira é a revisão de preços às 9:30.',
+    tasks: [
+      'Reunir os preços dos concorrentes para o briefing do Q4',
+      'Rascunho da estrutura do briefing estratégico do Q4',
+      'Atualizar o feed de produtos do Google Shopping',
+    ],
+    activity: 'Lendo 14 páginas de produtos',
+    resultDone:
+      'Seis seções: mercado, preços, canais, riscos, roadmap, pedidos. Duas perguntas em aberto para a Giulia foram marcadas.',
+    resultFailed: 'Envio do feed recusado: 3 produtos estão sem GTIN.',
+    approval: {
+      low: ['Editar um arquivo', 'src/components/Footer.tsx', undefined],
+      medium: [
+        'Executar um comando de shell',
+        'pnpm add @radix-ui/react-separator',
+        'O novo rodapé usa um componente separador que ainda não está instalado.',
+      ],
+      high: ['Excluir uma pasta', 'rm -rf dist', 'Limpeza antes de um build novo.'],
+    },
+    weather: '14° · céu limpo',
+    events: [
+      { time: '09:30', title: 'Revisão de preços — loja' },
+      { time: '12:00', title: 'Almoço com a Giulia' },
+      { time: '16:00', title: 'Briefing estratégico Q4' },
+    ],
+    emails: [
+      { from: 'Giulia Romano', subject: 'Deck do conselho — pode ver o slide 7?' },
+      { from: 'Shopify', subject: '3 pedidos para enviar' },
+    ],
+    greeting: 'Jarvis, bom dia',
+    reminder: 'Ligar para o Marco',
+    memories: [
+      ['Prefere respostas curtas', 'said', 2],
+      ['Cuida do e‑commerce da loja e escreve briefings estratégicos', 'inferred', 6],
+      ['As reuniões da manhã começam às 9:30', 'inferred', 10],
+      ['Giulia Romano é a contato do conselho', 'said', 15],
+    ],
+  },
 } as const;
 
 export function mockApproval(

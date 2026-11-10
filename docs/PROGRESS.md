@@ -77,3 +77,12 @@
     `pnpm e2e` 6/6.
 - 2026-10-03 — v0.1.0 released (draft): all phases merged to `main`; 438 workspace tests + 35 relay + 52 Rust tests, `pnpm e2e` 6/6, `pnpm e2e:relay` 14/14.
 - 2026-10-04 — Real-app e2e campaign on Windows 11 (`scripts/e2e-app`, 13 stages) and fixes it produced (PRs #26–#35 and the v0.1.2 PR): blank Settings/Sessions windows, QR library, chunked secrets for Sign in with ChatGPT, Whisper model fallback/refresh, voice-provider status and out-of-credit notices, ElevenLabs voice + parameters, History/Memory/Projects/About/Integrations gaps, silence-tag and self-echo filters, wake word by speech recognition. Verified on the real app: Claude Code, Codex, ChatGPT plan, MCP with real Claude, ElevenLabs, UI stage 11/11. Not verified on the real app: the wake word by speech recognition (Smart App Control blocked the new exe), macOS/Linux installers, Fish Audio (no API credit). v0.1.1 and v0.1.2 released as pre-releases.
+
+- 2026-11-10 — Brazilian Portuguese (branch `feat/voice-pt-br`):
+  - `Locale` gains `pt`; `intlLocale()` maps it to `pt-BR` (and `it`/`en` to `it-IT`/`en-GB`) for `Intl`.
+  - Core: pt phrases, pt yes/no, pt stop/cancel/dictation fast path, pt wake words, pt router/everyday prompts, `pt` chips in suggestions.
+  - Sidecar: pt extra phrases, pt voice-test line, pt status line, agents answer in Brazilian Portuguese.
+  - Providers: `lang()` returns `en | it | pt`; default `pt` voices; Piper `pt_BR-faber-medium` pinned by SHA-256; Kokoro refuses non-English so the app falls back to the system voice.
+  - Desktop: `pt.json` (449 keys, parity-tested), Settings/Onboarding option, pt demo copy and preview locale, date formatting via `intlLocale`.
+  - MCP bundle rebuilt (`pnpm --filter @jarvis/mcp build`) after the core changes.
+  - Not done here: Rust side (`whisper_language`, Windows/macOS/Linux system voice names, tray labels). No Rust toolchain in this environment, so the `voice` feature build has not been compiled.
