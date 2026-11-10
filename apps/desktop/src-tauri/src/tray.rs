@@ -31,6 +31,15 @@ fn labels(locale: &str) -> Labels {
             settings: "Impostazioni…",
             quit: "Esci da Jarvis",
         }
+    } else if locale.starts_with("pt") {
+        Labels {
+            home: "Mostrar Início",
+            sessions: "Mostrar/ocultar sessões",
+            hands_free: "Mãos livres (“Jarvis”)",
+            private: "Modo privado",
+            settings: "Configurações…",
+            quit: "Sair do Jarvis",
+        }
     } else {
         Labels {
             home: "Show Home",
@@ -197,6 +206,8 @@ mod tests {
     #[test]
     fn tray_labels_are_localised() {
         assert_eq!(labels("it").quit, "Esci da Jarvis");
+        assert_eq!(labels("pt").quit, "Sair do Jarvis");
+        assert_eq!(labels("pt-BR").settings, "Configurações…");
         assert_eq!(labels("en").settings, "Settings…");
     }
 }

@@ -182,15 +182,27 @@ pub fn system_speak_candidates(
     rate: f32,
 ) -> Vec<CommandSpec> {
     let rate = rate.clamp(0.5, 2.0);
-    let it = locale.starts_with("it");
+    // Only a fixed set of language tags ever reaches a command line: never the raw locale string.
+    let lang = if locale.starts_with("it") {
+        "it"
+    } else if locale.starts_with("pt") {
+        "pt"
+    } else {
+        "en"
+    };
     match platform {
         Platform::Mac => {
             // `say` reads from stdin when no text argument is given (`-f -`).
             let wpm = ((175.0 * rate).round() as i32).to_string();
             let mut say = CommandSpec::new("say", &["-r", &wpm, "-f", "-"]);
-            if it {
-                say.args
-                    .splice(0..0, ["-v".to_string(), "Alice".to_string()]);
+            // Built-in voices: Alice (Italian), Luciana (Brazilian Portuguese).
+            let voice = match lang {
+                "it" => Some("Alice"),
+                "pt" => Some("Luciana"),
+                _ => None,
+            };
+            if let Some(voice) = voice {
+                say.args.splice(0..0, ["-v".to_string(), voice.to_string()]);
             }
             say.stdin = Some(text.into());
             vec![say]
@@ -209,7 +221,8 @@ pub fn system_speak_candidates(
             let sapi_rate = (((rate - 1.0) * 10.0).round() as i32)
                 .clamp(-10, 10)
                 .to_string();
-            let culture = if it { "it" } else { "en" };
+            // "pt" matches the first installed Portuguese voice (pt-BR on Brazilian Windows).
+            let culture = lang;
             let mut ps = CommandSpec::new(
                 "powershell",
                 &["-NoProfile", "-NonInteractive", "-Command", SCRIPT],
@@ -222,7 +235,6 @@ pub fn system_speak_candidates(
             vec![ps]
         }
         Platform::Linux => {
-            let lang = if it { "it" } else { "en" };
             let spd_rate = (((rate - 1.0) * 100.0).round() as i32)
                 .clamp(-100, 100)
                 .to_string();
@@ -230,7 +242,9 @@ pub fn system_speak_candidates(
             let mut spd = CommandSpec::new("spd-say", &["-w", "-e", "-l", lang, "-r", &spd_rate]);
             spd.stdin = Some(text.into());
             let wpm = ((175.0 * rate).round() as i32).to_string();
-            let mut esp = CommandSpec::new("espeak-ng", &["-v", lang, "-s", &wpm, "--stdin"]);
+            // espeak-ng's plain "pt" is European Portuguese; Brazilian is "pt-br".
+            let esp_voice = if lang == "pt" { "pt-br" } else { lang };
+            let mut esp = CommandSpec::new("espeak-ng", &["-v", esp_voice, "-s", &wpm, "--stdin"]);
             esp.stdin = Some(text.into());
             vec![spd, esp]
         }
@@ -471,6 +485,39 @@ mod tests {
             win.env
                 .contains(&("JARVIS_TTS_CULTURE".into(), "en".into()))
         );
+    }
+
+    #[test]
+    fn portuguese_uses_the_brazilian_voice_on_macos() {
+        let say = &system_speak_candidates(Platform::Mac, "oi", "pt", 1.0)[0];
+        assert_eq!(&say.args[..2], ["-v".to_string(), "Luciana".to_string()]);
+        let it = &system_speak_candidates(Platform::Mac, "ciao", "it", 1.0)[0];
+        assert_eq!(&it.args[..2], ["-v".to_string(), "Alice".to_string()]);
+        let en = &system_speak_candidates(Platform::Mac, "hi", "en", 1.0)[0];
+        assert!(!en.args.contains(&"-v".to_string()));
+    }
+
+    #[test]
+    fn portuguese_selects_a_portuguese_culture_on_windows() {
+        for locale in ["pt", "pt-BR"] {
+            let win = &system_speak_candidates(Platform::Windows, "oi", locale, 1.0)[0];
+            assert!(
+                win.env
+                    .contains(&("JARVIS_TTS_CULTURE".into(), "pt".into())),
+                "{locale}"
+            );
+        }
+    }
+
+    #[test]
+    fn portuguese_maps_to_brazilian_voices_on_linux() {
+        let specs = system_speak_candidates(Platform::Linux, "oi", "pt", 1.0);
+        let lang_after = |spec: &CommandSpec, flag: &str| {
+            let i = spec.args.iter().position(|a| a == flag).unwrap();
+            spec.args[i + 1].clone()
+        };
+        assert_eq!(lang_after(&specs[0], "-l"), "pt");
+        assert_eq!(lang_after(&specs[1], "-v"), "pt-br");
     }
 
     #[test]

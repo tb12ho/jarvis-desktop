@@ -71,6 +71,18 @@ impl VoiceSettings {
     }
 }
 
+/// Whisper language code for a settings locale ("it", "pt-BR" …). Unknown locales fall back to English.
+#[cfg_attr(not(feature = "voice"), allow(dead_code))]
+pub fn whisper_language(locale: &str) -> &'static str {
+    if locale.starts_with("it") {
+        "it"
+    } else if locale.starts_with("pt") {
+        "pt"
+    } else {
+        "en"
+    }
+}
+
 pub enum VoiceCmd {
     Settings(VoiceSettings),
     Mode {
@@ -145,5 +157,15 @@ mod tests {
             ..s
         };
         assert!(private.local_stt());
+    }
+
+    #[test]
+    fn whisper_language_follows_the_locale() {
+        assert_eq!(whisper_language("it"), "it");
+        assert_eq!(whisper_language("it-IT"), "it");
+        assert_eq!(whisper_language("pt"), "pt");
+        assert_eq!(whisper_language("pt-BR"), "pt");
+        assert_eq!(whisper_language("en"), "en");
+        assert_eq!(whisper_language("de"), "en");
     }
 }

@@ -85,4 +85,5 @@
   - Providers: `lang()` returns `en | it | pt`; default `pt` voices; Piper `pt_BR-faber-medium` pinned by SHA-256; Kokoro refuses non-English so the app falls back to the system voice.
   - Desktop: `pt.json` (449 keys, parity-tested), Settings/Onboarding option, pt demo copy and preview locale, date formatting via `intlLocale`.
   - MCP bundle rebuilt (`pnpm --filter @jarvis/mcp build`) after the core changes.
-  - Not done here: Rust side (`whisper_language`, Windows/macOS/Linux system voice names, tray labels). No Rust toolchain in this environment, so the `voice` feature build has not been compiled.
+  - Rust shell: `whisper_language()` (it→it, pt→pt, else en) used by the voice engine; pt system voices (macOS `Luciana`, Windows `pt` culture, `spd-say -l pt`, `espeak-ng -v pt-br`); pt tray labels. Compiled and tested on Windows with and without the `voice` feature.
+  - Not verified: real speech in Portuguese (microphone → Whisper) and the Piper download from inside the running app.

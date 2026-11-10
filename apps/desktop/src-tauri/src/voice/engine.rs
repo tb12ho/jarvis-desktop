@@ -630,11 +630,7 @@ impl Worker {
                         trigger: Trigger::WakeWord,
                         probe: true,
                         whisper_setting: self.settings.whisper_model.clone(),
-                        language: if self.settings.locale.starts_with("it") {
-                            "it".into()
-                        } else {
-                            "en".into()
-                        },
+                        language: super::whisper_language(&self.settings.locale).into(),
                     });
                 }
             }
@@ -670,11 +666,7 @@ impl Worker {
                     return;
                 }
                 if self.settings.local_stt() {
-                    let language = if self.settings.locale.starts_with("it") {
-                        "it"
-                    } else {
-                        "en"
-                    };
+                    let language = super::whisper_language(&self.settings.locale);
                     ASR_PENDING.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
                     let _ = self.asr.send(AsrJob {
                         samples,
